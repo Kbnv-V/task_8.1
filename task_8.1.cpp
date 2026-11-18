@@ -1,15 +1,15 @@
-﻿#include <iostream>
+#include <iostream>
 #include <exception>
 #include <Windows.h>
 
-class StringExeption : public std::exception
+class bad_lenght : public std::exception
 {
 private:
     std::string error{};
 
 public:
-    StringExeption() = default;
-    StringExeption(std::string_view setError) : error(setError) {}
+    bad_lenght() = default;
+    bad_lenght(std::string_view setError) : error(setError) {}
 
     const char* what() const noexcept override
     {
@@ -18,13 +18,13 @@ public:
 };
 
 
-int func(std::string& str, int& len)
+int func(std::string& str, size_t& len)
 {
-    int lenStr = str.length();
+    size_t lenStr = str.length();
 
     if (lenStr == len)
     {
-        throw StringExeption("bad_lenght");
+        throw bad_lenght("Вы ввели слово запретной длины! До свидания");
     }
     else
     {
@@ -38,7 +38,7 @@ int main()
     SetConsoleOutputCP(1251);
 
     std::string str{};
-    int forbiddenLen{}, strLen{};
+    size_t forbiddenLen{}, strLen{};
 
     try
     {
@@ -53,15 +53,8 @@ int main()
             std::cout << "Длина слова \"" << str << "\" равна " << strLen << std::endl;
         }
     }
-    catch (StringExeption& err)
+    catch (bad_lenght& err)
     {
-        if (static_cast<std::string>(err.what()) == "bad_lenght")
-        {
-            std::cout << "Вы ввели слово запретной длины! До свидания" << std::endl;
-        }
-        else
-        {
-            std::cout << "Text error: " << err.what() << std::endl;
-        }
+        std::cout << err.what() << std::endl;
     }
 }
